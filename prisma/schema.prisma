@@ -15,19 +15,8 @@ datasource db {
 
 model User {
   id       String  @id @default(cuid())
-  name     String?
+  walletAddress     String
   email    String  @unique
   password String
-  posts    Post[]
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String?
-  author    User?    @relation(fields: [authorId], references: [id])
-}
