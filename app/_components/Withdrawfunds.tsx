@@ -33,9 +33,9 @@ export default function WithdrawFunds() {
 
       setTxHash(hash);
       setOpen(false); // close dialog on success
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Withdraw failed", err);
-      setError(err.message ?? "Transaction failed");
+      // setError(err ?? "Transaction failed");
     } finally {
       setLoading(false);
     }
