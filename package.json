@@ -2,13 +2,14 @@
   "name": "crypto-payment",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+   "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "npx prisma migrate deploy || [ \"$DATABASE_URL\" = \"prisma+postgres://accelerate.prisma-data.net/?api_key=API_KEY\" ] && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "npx prisma generate --no-engine"
   },
+
   
   "dependencies": {
     "@prisma/client": "^6.15.0",
