@@ -1,4 +1,4 @@
-import WalletConnector from "./_components/Walletconnector";
+import Featuresection from "./_components/Featuresection";
 import { HeroSectionOne } from "./_components/Hero";
 
 export default function App() {
@@ -7,6 +7,7 @@ export default function App() {
         <div className="">
         {/* <WalletConnector/> */}
         <HeroSectionOne/>
+        <Featuresection/>
         </div>
      
     

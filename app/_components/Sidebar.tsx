@@ -4,13 +4,17 @@ import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconArrowLeft,
   IconBrandTabler,
-  IconSettings,
   IconUserBolt,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
-
+import { signOut } from "next-auth/react";
 
 export function SidebarDemo() {
+  // Logout handler
+  const handleLogout = async () => {
+    signOut({ callbackUrl: "/login" });
+  };
+
   const links = [
     {
       label: "Dashboard",
@@ -29,25 +33,26 @@ export function SidebarDemo() {
     {
       label: "Logout",
       href: "#",
+      onClick: handleLogout, // attach handler
       icon: (
         <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
   ];
+
   const [open, setOpen] = useState(false);
+
   return (
-    <div
-      className="h-dvh fixed top-0 left-0 "
-    >
+    <div className="h-dvh fixed top-0 left-0">
       <Sidebar open={open} setOpen={setOpen} animate={false}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-            <>
-              <Logo />
-            </>
+            <Logo />
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
+                <div key={idx} onClick={link.onClick}>
+                  <SidebarLink link={link} />
+                </div>
               ))}
             </div>
           </div>
@@ -70,10 +75,10 @@ export function SidebarDemo() {
           </div>
         </SidebarBody>
       </Sidebar>
-      {/* <Dashboard /> */}
     </div>
   );
 }
+
 export const Logo = () => {
   return (
     <a
@@ -91,6 +96,7 @@ export const Logo = () => {
     </a>
   );
 };
+
 export const LogoIcon = () => {
   return (
     <a
@@ -101,4 +107,3 @@ export const LogoIcon = () => {
     </a>
   );
 };
-

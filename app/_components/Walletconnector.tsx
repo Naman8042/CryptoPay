@@ -34,7 +34,7 @@ export default function WalletConnector() {
     `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
-    <div className="flex items-center justify-end w-full h-[10vh] max-w-7xl mx-auto">
+    <div className="flex items-center justify-end w-full min-h-[10vh] max-w-7xl mx-auto">
       {isConnected && address ? (
         <div className="flex items-center justify-between gap-3 w-full">
           <Badge variant="secondary" className="text-base px-4 py-2 flex gap-1 ">
