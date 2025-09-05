@@ -23,9 +23,9 @@ const Navbar = () => {
   return (
     <header className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full z-50 bg-white text-sm py-3 fixed top-0 h-[10vh] shadow-sm">
       <nav className="max-w-7xl w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
-        <a className="sm:order-1 flex-none text-3xl font-semibold focus:outline-hidden focus:opacity-80" href="/">
+        <Link className="sm:order-1 flex-none text-3xl font-semibold focus:outline-hidden focus:opacity-80" href="/">
           CryptoPay
-        </a>
+        </Link>
 
         <div className="sm:order-3 flex items-center gap-x-2">
           {/* Mobile toggle button here */}

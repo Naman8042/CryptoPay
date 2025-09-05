@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useWriteContract } from "wagmi";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/contract";
+import Link from "next/link";
 
 export default function WithdrawFunds() {
   const { writeContractAsync } = useWriteContract();
@@ -100,14 +101,14 @@ export default function WithdrawFunds() {
       {txHash && (
         <p className="mt-3 text-sm text-green-600">
           ✅ Withdrawal successful!{" "}
-          <a
+          <Link
             href={`https://etherscan.io/tx/${txHash}`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline"
           >
             View Transaction
-          </a>
+          </Link>
         </p>
       )}
     </>
