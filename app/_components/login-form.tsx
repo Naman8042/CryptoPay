@@ -1,114 +1,84 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/contract";
-import axios from 'axios'
+import { signIn } from "next-auth/react"; 
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const[email,setEmail] = useState("")
-  const[password,setPassword] = useState("")
-  const [walletAddress, setWalletAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [mounted, setMounted] = useState(false);
-
-  const { address: merchant, isConnected } = useAccount();
-  const { writeContract, isPending } = useWriteContract();
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
-    setMounted(true); // ✅ only true after client mount
+    setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (merchant) {
-      setWalletAddress(merchant);
-    }
-  }, [merchant]);
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-
-  try {
-    // 1️⃣ Call your API route to save user credentials in DB
-    const res = await axios.post("/api/signup", 
-      {
-        email,
-        password,
-        walletAddress,
-      }
-    );
-
-    
-    console.log("✅ User saved in DB:", res.data);
-
-    // 2️⃣ Call smart contract to register merchant
-    const txs = writeContract({
-      abi: CONTRACT_ABI,
-      address: CONTRACT_ADDRESS,
-      functionName: "registerMerchant",
-      account: merchant,
+    const result = await signIn("credentials", {
+      redirect: false, // prevent auto redirect
+      email,
+      password,
     });
 
-    console.log("✅ Contract transaction sent:", txs);
-  } catch (err) {
-    console.error("❌ Registration failed:", err);
-  }
-};
-
+    if (result?.error) {
+      setError("Invalid email or password");
+    } else {
+      router.push("/dashboard"); // redirect after login
+    }
+  };
 
   return (
     <form
       className={cn("flex flex-col gap-6", className)}
       {...props}
-      onSubmit={handleRegister}
+      onSubmit={handleLogin}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create account</h1>
+        <h1 className="text-2xl font-bold">Login</h1>
         <p className="text-muted-foreground text-sm text-balance w-full">
-          Enter your wallet address below to create your account
+          Enter your email and password to access your account
         </p>
       </div>
 
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="email">email</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             value={email}
-            type="text"
-            placeholder="Enter Your email"
+            type="email"
+            placeholder="Enter your email"
             required
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Label htmlFor="address">Wallet Address</Label>
-          <Input
-            id="address"
-            value={walletAddress}
-            type="text"
-            placeholder={
-              mounted && isConnected ? merchant : "Connect your wallet"
-            }
-            required
-            onChange={(e) => setWalletAddress(e.target.value)}
-          />
+
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             value={password}
-            type="text"
-            placeholder="Enter Your Password"
+            type="password"
+            placeholder="Enter your password"
             required
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Processing..." : "Create Account"}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        <Button type="submit" className="w-full">
+          Login
         </Button>
       </div>
     </form>

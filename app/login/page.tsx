@@ -1,10 +1,8 @@
-import WalletConnector from "../_components/Walletconnector";
-import { LoginForm } from "@/app/_components/signup-form";
+import { LoginForm } from "@/app/_components/Login-form";
 
 const page = () => {
   return (
     <div className="px-4 ">
-      <WalletConnector />
 
       <div className="grid lg:grid-cols-2  h-[80vh] max-w-7xl mx-auto">
         <div className="flex flex-col gap-4 p-6 md:p-10">

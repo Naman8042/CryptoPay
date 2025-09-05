@@ -1,25 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-
-// Register user
 export async function POST(req: NextRequest) {
-  const { email, password, walletAddress } =  await req.json();
+  try {
+    const { email, password, walletAddress } = await req.json();
 
-  console.log(email,password,walletAddress)
-  // Hash password
-  const passwordHash = await bcrypt.hash(password, 10);
+    if (!email || !password || !walletAddress) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
-  
-  // Store in DB
-  const user = await prisma.user.create({
-    data: {
-      email,
-      password:passwordHash,
-      walletAddress,
-    },
-  });
+    // 🔎 Check if user already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { walletAddress }],
+      },
+    });
 
-  return NextResponse.json(user, { status: 201 });  // ✅ Correct
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Email or Wallet Address already registered" },
+        { status: 409 } 
+      );
+    }
+
+    // ✅ Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // ✅ Store in DB
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: passwordHash,
+        walletAddress,
+      },
+    });
+
+    // Remove password before returning response
+    const { password: _, ...safeUser } = user;
+
+    return NextResponse.json(safeUser, { status: 201 });
+  } catch (err) {
+    console.error("❌ Signup error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
