@@ -105,44 +105,92 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       step: "4",
       description:
         "Create a ConnectButton component to connect and disconnect wallets.",
-      code: `import { useConnect, useAccount, useDisconnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
+      code: `"use client";
+
+import { useConnect, useAccount, useDisconnect } from "wagmi";
+import { useState } from "react";
 
 export function ConnectButton() {
-  const { connect } = useConnect({ connector: new InjectedConnector() });
+  const { connectors, connect, status, error } = useConnect();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
+  // Track which connector is being used
+  const [activating, setActivating] = useState<string | null>(null);
+
   if (isConnected) {
     return (
-      <div>
-        <p>Connected: {address}</p>
-        <button onClick={() => disconnect()}>Disconnect</button>
+      <div className="space-y-2">
+        <p className="text-sm break-all">Connected: {address}</p>
+        <button
+          onClick={() => disconnect()}
+          className="px-4 py-2 bg-red-500 text-white rounded-md"
+        >
+          Disconnect
+        </button>
       </div>
     );
   }
 
-  return <button onClick={() => connect()}>Connect Wallet</button>;
-}`,
+  return (
+    <div className="space-y-2">
+      {connectors.map((connector) => (
+        <button
+          key={connector.id}
+          onClick={() => {
+            setActivating(connector.id);
+            connect({ connector });
+          }}
+          disabled={status === "pending" && activating === connector.id}
+          className="flex items-center justify-between px-4 py-2 bg-gray-200 rounded-md w-full"
+        >
+          {connector.name}
+          {status === "pending" && activating === connector.id && " (connecting...)"}
+        </button>
+      ))}
+
+      {error && (
+        <p className="text-sm text-red-500">Error: {error.message}</p>
+      )}
+    </div>
+  );
+}
+`,
       language: "tsx",
       filename: "ConnectButton.tsx",
     },
     {
       step: "5",
       description: "Fetch and display merchant balance with your SDK.",
-      code: `import { useMerchantBalance } from "my-gateway-sdk";
+      code: `"use client";
 
-function MerchantDashboard({ merchant }: { merchant: "0x{string}" }) {
+import { useMerchantBalance } from "my-gateway-sdk";
+
+export default function MerchantDashboard({
+  merchant,
+}: {
+  merchant: \`0x\${string}\`;
+}) {
   const { balance, isLoading, refetch } = useMerchantBalance(merchant);
 
   if (isLoading) return <p>Loading...</p>;
+
   return (
-    <div>
-      <p>Merchant Balance: {balance?.toString()} wei</p>
-      <button onClick={() => refetch()}>Refresh</button>
+    <div className="space-y-4 p-4 border rounded-md">
+      <p>
+        <strong>Merchant Balance:</strong>{" "}
+        {balance ? balance.toString() : "0"} wei
+      </p>
+      <button
+        onClick={() => refetch()}
+        className="px-4 py-2 bg-blue-500 text-white rounded-md"
+      >
+        Refresh
+      </button>
     </div>
   );
-}`,
+}
+`,
       language: "tsx",
       filename: "MerchantDashboard.tsx",
     },
