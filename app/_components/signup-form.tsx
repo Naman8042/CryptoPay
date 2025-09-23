@@ -47,7 +47,7 @@ export function LoginForm({
             txHash,
           });
           console.log("✅ User saved in DB:", res.data);
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error("❌ API error:", err);
           setErrorMessage("Database save failed after blockchain tx");
         }
