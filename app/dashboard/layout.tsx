@@ -1,4 +1,4 @@
-import {SidebarDemo} from '@/app/_components/Sidebar'
+import {SidebarAdmin} from '@/app/_components/Sidebar'
 
 export default function RootLayout({
   children,
@@ -7,8 +7,8 @@ export default function RootLayout({
 }>) {
   return (
     <div className='flex'>
-    <SidebarDemo/>
-    <div className='ml-[300px] w-full'>
+    <SidebarAdmin/>
+    <div className='md:ml-[300px] w-full'>
     {children}
     </div>
     </div>

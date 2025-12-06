@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { mainnet, sepolia} from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 import { 
   http, 
@@ -11,32 +11,15 @@ import { ReactNode } from "react";
 
 const queryClient = new QueryClient();
 
-const hardhatChain = {
-  id: 31337,
-  name: "Hardhat Local",
-  network: "hardhat",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: { http: ["http://127.0.0.1:8545"] },
-  },
-};
-
-
+// Define the config with ONLY Sepolia
 const config = createConfig({
-  chains: [hardhatChain, mainnet, sepolia],
+  chains: [sepolia], // 👈 Only allow Sepolia
   connectors: [injected()],
   transports: {
-    [hardhatChain.id]: http("http://127.0.0.1:8545"),
-    [mainnet.id]: http(),
+    // You can keep your Infura URL, or remove it to use the default public RPCs
     [sepolia.id]: http("https://sepolia.infura.io/v3/8452acd106ae43bcbc679a69da1d24bd"),
   },
 });
-
-
 
 export default function CryptoProvider({ children }: { children: ReactNode }) {
   return (
@@ -45,6 +28,5 @@ export default function CryptoProvider({ children }: { children: ReactNode }) {
         {children}
       </QueryClientProvider>
     </WagmiProvider>
-    
   );
 }

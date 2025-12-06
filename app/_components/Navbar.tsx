@@ -1,73 +1,175 @@
-"use client"
-import Link from "next/link"
-import { useSession } from "next-auth/react"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
+"use client";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button"; // Assuming this is your shadcn button
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
+  // Handle scroll effect for glassmorphism
   useEffect(() => {
-    if (status === "authenticated") {
-      setIsLoggedIn(true)
-    } else {
-      setIsLoggedIn(false)
-    }
-  }, [status])
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  if (status === "loading") {
-    return null
-  }
+  const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  // Prevent scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isMobileMenuOpen]);
+
+  if (status === "loading") return null;
 
   return (
-    <header className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full z-50 bg-white text-sm py-3 fixed top-0 h-[10vh] shadow-sm">
-      <nav className="max-w-7xl w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
-        <Link className="sm:order-1 flex-none text-3xl font-semibold focus:outline-hidden focus:opacity-80" href="/">
-          CryptoPay
-        </Link>
+    <>
+      <header
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          scrolled
+            ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 dark:bg-black/80 dark:border-neutral-800"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          
+          {/* --- Logo --- */}
+          <Link
+            href="/"
+            className="flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          >
+            Crypto<span className="text-blue-600">Pay</span>
+          </Link>
 
-        <div className="sm:order-3 flex items-center gap-x-2">
-          {/* Mobile toggle button here */}
-          {isLoggedIn ? (
-            <Button type="button">
-              <Link href={"/dashboard"}>Dashboard</Link>
-            </Button>
-          ) : (
-            <div className="flex gap-3">
-              <Button type="button" className="w-20">
-                <Link href={"/register"}>Register</Link>
-              </Button>
-              <Button type="button" className="w-20">
-                <Link href={"/login"}>Login</Link>
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div
-          id="hs-navbar-alignment"
-          className="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
-          aria-labelledby="hs-navbar-alignment-collapse"
-        >
-          <div className="flex flex-col gap-8 mt-5 sm:flex-row sm:items-center sm:mt-0">
+          {/* --- Desktop Navigation --- */}
+          <div className="hidden md:flex md:items-center md:gap-x-8">
             <Link
-              className="font-xl text-base text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
               href="/docs"
+              className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-500 transition-colors"
             >
               Docs
             </Link>
             <Link
-              className="font-xl text-base text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
               href="https://github.com/Naman8042/My-Gateway-sdk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-500 transition-colors"
             >
               Github
             </Link>
+             <Link
+              href="/pay"
+              className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-500 transition-colors"
+            >
+              Pay
+            </Link>
           </div>
-        </div>
-      </nav>
-    </header>
-  )
-}
 
-export default Navbar
+          {/* --- Desktop Auth Buttons --- */}
+          <div className="hidden md:flex md:items-center md:gap-x-3">
+            {session ? (
+              <Button asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white border-0">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* --- Mobile Menu Toggle --- */}
+          <div className="flex md:hidden">
+            <button
+              type="button"
+              onClick={toggleMenu}
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-200"
+            >
+              <span className="sr-only">Open main menu</span>
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Menu className="h-6 w-6" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* --- Mobile Menu Overlay --- */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-40 bg-white px-6 py-20 dark:bg-black md:hidden"
+          >
+            <div className="flex flex-col gap-6 text-center">
+              <Link
+                href="/docs"
+                onClick={toggleMenu}
+                className="text-lg font-semibold text-gray-900 dark:text-white"
+              >
+                Docs
+              </Link>
+              <Link
+                href="https://github.com/Naman8042/My-Gateway-sdk"
+                onClick={toggleMenu}
+                className="text-lg font-semibold text-gray-900 dark:text-white"
+              >
+                Github
+              </Link>
+              <Link
+                href="/pay"
+                onClick={toggleMenu}
+                className="text-lg font-semibold text-gray-900 dark:text-white"
+              >
+                Github
+              </Link>
+              
+              <div className="mt-4 flex flex-col gap-4">
+                {session ? (
+                  <Button asChild onClick={toggleMenu} size="lg">
+                    <Link href="/dashboard">Go to Dashboard</Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button asChild variant="outline" size="lg" onClick={toggleMenu}>
+                      <Link href="/login">Log in</Link>
+                    </Button>
+                    <Button asChild size="lg" onClick={toggleMenu} className="bg-blue-600 hover:bg-blue-700">
+                      <Link href="/register">Get Started</Link>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+export default Navbar;
