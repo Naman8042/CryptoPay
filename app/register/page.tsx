@@ -48,7 +48,7 @@ type WagmiWriteError = Error & {
 };
 
 // --- The Form Component ---
-export function SignupForm({
+function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
