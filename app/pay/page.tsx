@@ -18,6 +18,11 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+// 🔹 helper type instead of `any`
+type WagmiWriteError = Error & {
+  shortMessage?: string;
+};
+
 export default function PayPage() {
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-gray-50 dark:bg-black p-4">
@@ -147,12 +152,12 @@ function PaymentForm() {
     );
   }
 
-  // Helper to show nice error message
-  const errorMessage =
-    (error &&
-      (("shortMessage" in error && (error as any).shortMessage) ||
-        error.message)) ||
-    "";
+  // Helper to show nice error message (no `any` used)
+  const errorMessage = (() => {
+    if (!error) return "";
+    const wagmiError = error as WagmiWriteError;
+    return wagmiError.shortMessage ?? wagmiError.message ?? "";
+  })();
 
   return (
     <div className="flex flex-col gap-6 rounded-xl border bg-white p-6 shadow-xl dark:bg-neutral-900 dark:border-neutral-800">

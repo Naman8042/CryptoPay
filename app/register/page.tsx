@@ -42,6 +42,11 @@ export default function RegisterPage() {
   );
 }
 
+// Helper type for wagmi errors
+type WagmiWriteError = Error & {
+  shortMessage?: string;
+};
+
 // --- The Form Component ---
 export function SignupForm({
   className,
@@ -59,12 +64,7 @@ export function SignupForm({
 
   const { address: merchant, isConnected } = useAccount();
 
-  const {
-    writeContractAsync,
-    data: lastWriteHash, // sometimes wagmi will also give hash here
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContractAsync, isPending } = useWriteContract();
 
   const {
     isSuccess: txConfirmed,
@@ -80,13 +80,6 @@ export function SignupForm({
   useEffect(() => {
     if (merchant) setWalletAddress(merchant);
   }, [merchant]);
-
-  // Debug: log hook-level hash if needed
-  useEffect(() => {
-    if (lastWriteHash) {
-      console.log("wagmi write data (hash):", lastWriteHash);
-    }
-  }, [lastWriteHash]);
 
   // Handle DB Save after Blockchain confirmation
   useEffect(() => {
@@ -114,21 +107,6 @@ export function SignupForm({
     }
   }, [txConfirmed, txHash, email, password, walletAddress, success]);
 
-  // React to wagmi hook errors (simulation, user reject, revert, etc.)
-  useEffect(() => {
-    if (!error) return;
-
-    console.error("wagmi write error:", error);
-    const msg =
-      (error as any).shortMessage || error.message || "Transaction failed.";
-
-    if (msg.includes("Already registered")) {
-      setErrorMessage("This wallet is already registered.");
-    } else {
-      setErrorMessage(msg);
-    }
-  }, [error]);
-
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -150,18 +128,21 @@ export function SignupForm({
 
       console.log("📦 Tx sent, hash:", hash);
       setTxHash(hash);
-    } catch (err: any) {
-      console.error("❌ writeContractAsync failed:", err);
+    } catch (err: unknown) {
+      const wagmiError = err as WagmiWriteError;
+      console.error("❌ writeContractAsync failed:", wagmiError);
 
       const message =
-        err?.shortMessage || err?.message || JSON.stringify(err);
+        wagmiError.shortMessage ||
+        wagmiError.message ||
+        "Transaction failed or rejected.";
 
       if (message.includes("Already registered")) {
         setErrorMessage("This wallet is already registered.");
       } else if (message.includes("User rejected")) {
         setErrorMessage("Transaction rejected in wallet.");
       } else {
-        setErrorMessage("Transaction failed or rejected.");
+        setErrorMessage(message);
       }
     }
   };
