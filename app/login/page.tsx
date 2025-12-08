@@ -39,7 +39,7 @@ export default function LoginPage() {
 }
 
 // --- The Form Component ---
-export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
+function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
