@@ -35,7 +35,7 @@ export default function PayPage() {
           href="/"
           className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
         >
-          <span className="text-xl font-bold tracking-tight">CryptoPay</span>
+          <span className="text-xl font-bold tracking-tight">EtharisPay</span>
         </Link>
         <div className="scale-90 origin-right">
           <WalletConnector />

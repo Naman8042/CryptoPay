@@ -1,13 +1,7 @@
-
 "use client";
 
 import Link from "next/link";
-import {
-  Github,
-  Twitter,
-  DiscIcon as Discord,
-  Send,
-} from "lucide-react";
+import { Github, Twitter, DiscIcon as Discord, Send } from "lucide-react";
 
 const navigation = {
   product: [
@@ -34,9 +28,9 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-slate-200 bg-white">
+    <footer className="relative  overflow-hidden border-t border-slate-200 bg-white">
       {/* Background Glow */}
-      <div className="absolute left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
+      <div className="absolute max-w-7xl  left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-16">
         {/* Top CTA */}
@@ -67,9 +61,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
               <h2 className="text-3xl font-bold">
-                <span className="text-slate-900">
-                  Crypto
-                </span>
+                <span className="text-slate-900">Etharis</span>
                 <span className="bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
                   Pay
                 </span>
@@ -77,115 +69,21 @@ export default function Footer() {
             </Link>
 
             <p className="mt-4 max-w-sm text-sm leading-7 text-slate-600">
-              The easiest way for businesses to accept
-              Ethereum payments globally.
+              The easiest way for businesses to accept Ethereum payments
+              globally.
             </p>
 
             {/* Socials */}
-            <div className="mt-6 flex gap-3">
-              {[
-                Github,
-                Twitter,
-                Discord,
-                Send,
-              ].map((Icon, index) => (
-                <Link
-                  key={index}
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-blue-200 hover:text-blue-600"
-                >
-                  <Icon className="h-4 w-4" />
-                </Link>
-              ))}
-            </div>
+            
           </div>
 
-          {/* Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Product
-            </h3>
-
-            <ul className="mt-5 space-y-3">
-              {navigation.product.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-slate-600 transition hover:text-blue-600"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Support
-            </h3>
-
-            <ul className="mt-5 space-y-3">
-              {navigation.support.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-slate-600 transition hover:text-blue-600"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Company
-            </h3>
-
-            <ul className="mt-5 space-y-3">
-              {navigation.company.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-slate-600 transition hover:text-blue-600"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-
-              <div className="pt-4">
-                <h3 className="mb-3 text-sm font-semibold text-slate-900">
-                  Legal
-                </h3>
-
-                {navigation.legal.map((item) => (
-                  <div key={item.name}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-slate-600 transition hover:text-blue-600"
-                    >
-                      {item.name}
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </ul>
-          </div>
         </div>
 
         {/* Bottom */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 md:flex-row">
-          <p>
-            © {new Date().getFullYear()} CryptoPay.
-            All rights reserved.
-          </p>
+          <p>© {new Date().getFullYear()} EtharisPay. All rights reserved.</p>
 
-          <p>
-            Built for developers • Powered by Ethereum
-          </p>
+          <p>Built for developers • Powered by Ethereum</p>
         </div>
       </div>
     </footer>

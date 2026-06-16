@@ -14,7 +14,7 @@ import {
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white max-h-[90vh]">
+    <section className="relative overflow-hidden bg-white md:max-h-[90vh]">
       {/* Background Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#dbe4ff_1px,transparent_1px)] [background-size:24px_24px]" />
 
@@ -68,7 +68,7 @@ export default function HeroSection() {
               className="mt-10 flex flex-col gap-4 sm:flex-row"
             >
               <Link href="/docs">
-                <button className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105">
+                <button className="w-full justify-center md:justify-start group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105">
                   Get Started
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </button>
@@ -84,7 +84,7 @@ export default function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="mt-12 flex flex-wrap gap-8"
+              className="mt-12 hidden md:flex flex-wrap gap-8"
             >
               <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
                 <Zap className="h-4 w-4 text-blue-600" />
@@ -108,7 +108,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, scale: 0.9, x: 40 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="relative flex justify-center"
+            className="relative hidden md:flex justify-center"
           >
             {/* Circle */}
             <div className="absolute h-[550px] w-[550px] rounded-full border border-blue-100" />

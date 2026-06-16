@@ -31,7 +31,7 @@ const Navbar = () => {
     }
   }, [isMobileMenuOpen]);
 
-  if (status === "loading") return null;
+  // if (status === "loading") return null;
 
   return (
     <>
@@ -42,14 +42,14 @@ const Navbar = () => {
             : "bg-transparent border-b border-transparent"
         }`}
       >
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-0">
           
           {/* --- Logo --- */}
           <Link
             href="/"
             className="flex items-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
           >
-            Crypto<span className="text-blue-600">Pay</span>
+            Etharis<span className="text-blue-600">Pay</span>
           </Link>
 
           {/* --- Desktop Navigation --- */}
@@ -79,7 +79,7 @@ const Navbar = () => {
           {/* --- Desktop Auth Buttons --- */}
           <div className="hidden md:flex md:items-center md:gap-x-3">
             {session ? (
-              <Button asChild>
+              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white border-0">
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
             ) : (

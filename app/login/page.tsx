@@ -1,160 +1,265 @@
+
 "use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Loader2} from "lucide-react";
-import { motion } from "motion/react";
 
-// --- The Page Component ---
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
+
 export default function LoginPage() {
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gray-50 dark:bg-black p-4">
-      
-      {/* Background Decor (Grid Pattern) */}
-      <div className="absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] pointer-events-none" />
-      
-      {/* Back Button */}
-      {/* <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
-        <ArrowLeft className="h-4 w-4" />
-        Back to Home
-      </Link> */}
+    <div className="relative min-h-screen overflow-hidden bg-white">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(#dbeafe_1px,transparent_1px)] [background-size:28px_28px]" />
 
-      {/* Centered Form Card */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="z-10 w-full max-w-sm"
-      >
-        <LoginForm />
-      </motion.div>
+      {/* Gradient Glow */}
+      <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
+
+      <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
+        {/* LEFT */}
+        <div className="hidden md:flex flex-col justify-center px-8 lg:px-20">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl"
+          >
+
+            <h1 className="text-5xl font-black leading-none tracking-tight lg:text-7xl">
+              Access your
+              <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-violet-600 bg-clip-text text-transparent">
+                {" "}
+                dashboard
+              </span>
+            </h1>
+
+            <p className="mt-8 max-w-xl text-lg leading-8 text-neutral-600">
+              Sign in to manage transactions, monitor
+              payments, track settlements, and access
+              your payment gateway tools.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-6 text-sm font-medium text-neutral-700">
+              <div>✓ Secure Authentication</div>
+              <div>✓ Instant Settlements</div>
+              <div>✓ Ethereum Payments</div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="flex items-center justify-center p-6 lg:p-10">
+          <LoginForm />
+        </div>
+      </div>
     </div>
   );
 }
 
-// --- The Form Component ---
-function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] =
+    useState("");
+  const [showPassword, setShowPassword] =
+    useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] =
+    useState(false);
+
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
+
     setError("");
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
+      const result = await signIn(
+        "credentials",
+        {
+          redirect: false,
+          email,
+          password,
+        }
+      );
 
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError(
+          "Invalid email or password."
+        );
         setIsLoading(false);
-      } else {
-        router.push("/dashboard");
+        return;
       }
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
+
+      router.replace("/dashboard");
+      router.refresh();
+    } catch {
+      setError(
+        "Something went wrong. Please try again."
+      );
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6 rounded-xl border bg-white p-6 shadow-xl dark:bg-neutral-900 dark:border-neutral-800", className)}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black dark:bg-white">
-          {/* Logo Icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6 text-white dark:text-black"
-          >
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" x2="3" y1="12" y2="12" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Enter your credentials to access your account
-        </p>
-      </div>
-
-      <form onSubmit={handleLogin} className="grid gap-4" {...props}>
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@example.com"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-10"
-          />
-        </div>
-
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href="/forgot-password"
-              className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="h-10"
-          />
-        </div>
-
-        {error && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-500 dark:bg-red-900/20 dark:text-red-400">
-            {error}
-          </div>
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 30,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        duration: 0.4,
+      }}
+      className="w-full max-w-md"
+    >
+      <div
+        className={cn(
+          "rounded-3xl border border-neutral-200 bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.08)]",
+          className
         )}
+      >
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold">
+            Welcome back
+          </h2>
 
-        <Button type="submit" className="w-full h-10" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
-            </>
-          ) : (
-            "Sign in"
+          <p className="mt-2 text-sm text-neutral-500">
+            Enter your credentials to continue.
+          </p>
+        </div>
+
+        <form
+          onSubmit={handleLogin}
+          className="space-y-5"
+          {...props}
+        >
+          <div>
+            <Label htmlFor="email">
+              Email
+            </Label>
+
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              className="mt-2 h-12 rounded-xl"
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              required
+            />
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <Label htmlFor="password">
+                Password
+              </Label>
+
+              <Link
+                href="/forgot-password"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            <div className="relative">
+              <Input
+                id="password"
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="••••••••"
+                className="h-12 rounded-xl pr-10"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-neutral-500" />
+                ) : (
+                  <Eye className="h-4 w-4 text-neutral-500" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              {error}
+            </div>
           )}
-        </Button>
-      </form>
 
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
-          Sign up
-        </Link>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white hover:opacity-90"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-neutral-500">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-blue-600 hover:underline"
+          >
+            Sign up
+          </Link>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
+

@@ -8,7 +8,7 @@ export default function RootLayout({
   return (
     <div className='flex'>
     <SidebarAdmin/>
-    <div className='md:ml-[300px] w-full'>
+    <div className='md:ml-[300px] w-full mt-10 md:mt-0'>
     {children}
     </div>
     </div>

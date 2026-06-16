@@ -2,7 +2,7 @@ import RecentTransactions from "@/app/_components/RecentTransactions"
 
 const page = () => {
   return (
-    <div><RecentTransactions/></div>
+    <div className="p-4"><RecentTransactions/></div>
   )
 }
 

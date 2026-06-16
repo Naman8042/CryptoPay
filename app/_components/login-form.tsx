@@ -1,160 +1,307 @@
+
 "use client";
 
-import { cn } from "@/lib/utils";
+import { useState } from "react";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Loader2, ArrowLeft } from "lucide-react";
-import { motion } from "motion/react";
+import { Checkbox } from "@/components/ui/checkbox";
 
-// --- The Page Component ---
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
+
 export default function LoginPage() {
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gray-50 dark:bg-black p-4">
-      
-      {/* Background Decor (Grid Pattern) */}
-      <div className="absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] pointer-events-none" />
-      
+    <div className="min-h-screen bg-white">
       {/* Back Button */}
-      <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
+      <Link
+        href="/"
+        className="absolute left-8 top-8 z-50 flex items-center gap-2 text-sm font-medium text-neutral-600 transition-colors hover:text-black"
+      >
         <ArrowLeft className="h-4 w-4" />
-        Back to Home
+        Back
       </Link>
 
-      {/* Centered Form Card */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="z-10 w-full max-w-sm"
-      >
-        <LoginForm />
-      </motion.div>
+      <div className="grid min-h-screen lg:grid-cols-2">
+        {/* LEFT SIDE */}
+        <div className="hidden lg:flex flex-col justify-center border-r border-neutral-200 bg-neutral-50 px-16">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-lg"
+          >
+            <div className="mb-8 flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black text-white">
+                <Sparkles className="h-5 w-5" />
+              </div>
+
+              <span className="text-xl font-semibold">
+                Your Brand
+              </span>
+            </div>
+
+            <h1 className="text-5xl font-bold tracking-tight text-black">
+              Welcome Back
+            </h1>
+
+            <p className="mt-5 text-lg leading-8 text-neutral-600">
+              Sign in to access your dashboard and continue
+              where you left off.
+            </p>
+
+            {/* Decorative UI */}
+            <div className="mt-16 rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm">
+              <div className="space-y-4">
+                <div className="h-3 w-32 rounded-full bg-neutral-200" />
+                <div className="h-3 w-full rounded-full bg-neutral-100" />
+                <div className="h-3 w-4/5 rounded-full bg-neutral-100" />
+              </div>
+
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                <div className="h-24 rounded-2xl bg-neutral-100" />
+                <div className="h-24 rounded-2xl bg-neutral-100" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="flex items-center justify-center px-6 py-10">
+          <LoginForm />
+        </div>
+      </div>
     </div>
   );
 }
 
-// --- The Form Component ---
-export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+function LoginForm() {
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] =
+    useState("");
+  const [showPassword, setShowPassword] =
+    useState(false);
+  const [isLoading, setIsLoading] =
+    useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
+
     setError("");
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
+      const result = await signIn(
+        "credentials",
+        {
+          redirect: false,
+          email,
+          password,
+        }
+      );
 
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError(
+          "Invalid email or password"
+        );
         setIsLoading(false);
-      } else {
-        router.push("/dashboard");
+        return;
       }
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
+
+      router.push("/dashboard");
+    } catch {
+      setError(
+        "Something went wrong. Please try again."
+      );
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6 rounded-xl border bg-white p-6 shadow-xl dark:bg-neutral-900 dark:border-neutral-800", className)}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black dark:bg-white">
-          {/* Logo Icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6 text-white dark:text-black"
-          >
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" x2="3" y1="12" y2="12" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Enter your credentials to access your account
-        </p>
-      </div>
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        duration: 0.4,
+      }}
+      className="w-full max-w-md"
+    >
+      <div className="rounded-3xl border border-neutral-200 bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.08)]">
+        {/* Header */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Sign In
+          </h2>
 
-      <form onSubmit={handleLogin} className="grid gap-4" {...props}>
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@example.com"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-10"
-          />
+          <p className="mt-2 text-sm text-neutral-500">
+            Enter your credentials below.
+          </p>
         </div>
 
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href="/forgot-password"
-              className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="h-10"
-          />
-        </div>
-
-        {error && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-500 dark:bg-red-900/20 dark:text-red-400">
-            {error}
-          </div>
-        )}
-
-        <Button type="submit" className="w-full h-10" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
-            </>
-          ) : (
-            "Sign in"
-          )}
+        {/* Google */}
+        <Button
+          type="button"
+          variant="outline"
+          className="mb-6 h-12 w-full rounded-xl"
+          onClick={() =>
+            signIn("google")
+          }
+        >
+          Continue with Google
         </Button>
-      </form>
 
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
-          Sign up
-        </Link>
+        {/* Divider */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-neutral-200" />
+          </div>
+
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-neutral-400">
+              Or
+            </span>
+          </div>
+        </div>
+
+        <form
+          onSubmit={handleLogin}
+          className="space-y-5"
+        >
+          <div>
+            <Label htmlFor="email">
+              Email
+            </Label>
+
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              className="mt-2 h-12 rounded-xl"
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              required
+            />
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <Label htmlFor="password">
+                Password
+              </Label>
+
+              <Link
+                href="/forgot-password"
+                className="text-sm text-neutral-500 hover:text-black"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            <div className="relative">
+              <Input
+                id="password"
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="••••••••"
+                className="h-12 rounded-xl pr-10"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+                className="absolute right-3 top-3"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-neutral-500" />
+                ) : (
+                  <Eye className="h-4 w-4 text-neutral-500" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="remember" />
+
+            <Label
+              htmlFor="remember"
+              className="cursor-pointer text-sm"
+            >
+              Remember me
+            </Label>
+          </div>
+
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="h-12 w-full rounded-xl bg-black text-white hover:bg-neutral-800"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-neutral-500">
+          Don't have an account?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-black hover:underline"
+          >
+            Create account
+          </Link>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

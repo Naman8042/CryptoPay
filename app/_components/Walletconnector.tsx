@@ -48,7 +48,7 @@ export default function WalletConnector() {
   // 1. CONNECTED STATE (Dropdown UI)
   if (isConnected && address) {
     return (
-      <DropdownMenu>
+      <DropdownMenu >
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2 rounded-full border-gray-300 dark:border-gray-700">
             <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />

@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CryptoPay",
+  title: "EtharisPay",
   description: "Cryto Payment Gateway",
 };
 

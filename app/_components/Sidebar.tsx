@@ -50,9 +50,9 @@ export function SidebarAdmin() {
   ];
 
   return (
-    <div className="h-dvh fixed top-0 left-0 z-50 shadow-sm">
+    <div className="h-dvh fixed top-0 left-0 z-50 md:shadow-sm">
       <Sidebar open={open} setOpen={setOpen} animate={false}>
-        <SidebarBody className="justify-between gap-10 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800">
+        <SidebarBody className="justify-between gap-10 bg-white dark:bg-neutral-900 md:border-r border-neutral-200 dark:border-neutral-800">
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             <Logo />
             <div className="mt-8 flex flex-col gap-2">
@@ -131,7 +131,7 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-bold text-base tracking-tight whitespace-pre text-neutral-900 dark:text-white"
       >
-        CryptoPay
+        EtharisPay
       </motion.span>
     </Link>
   );
